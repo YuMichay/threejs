@@ -5,6 +5,8 @@ import './style.css';
 
 import { ambientLight, dirLight } from './environment/light';
 import { player } from './objects/player';
+import { ground } from './environment/ground';
+import { sky } from './environment/sky';
 
 const scene = new Scene();
 const camera = new PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -18,8 +20,13 @@ controls.target.set(0, 0, 0);
 controls.update();
 
 // ADD LIGHT
-scene.add(ambientLight);
-scene.add(dirLight);
+scene.add(ambientLight, dirLight);
+
+// ADD GROUND
+scene.add(ground);
+
+// ADD SKY
+scene.add(sky);
 
 // ADD PLAYER
 scene.add(player.group);
