@@ -1,8 +1,8 @@
-import { AnimationAction, AnimationMixer, Group } from "three";
+import { AnimationAction, AnimationMixer, Group, Scene } from "three";
 
 export interface Player {
   group: Group;
-  render: () => void;
+  render: (scene: Scene) => void;
   mixer?: AnimationMixer;
   walkAction?: AnimationAction;
 }

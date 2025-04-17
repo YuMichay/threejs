@@ -1,21 +1,17 @@
-import { Scene, PerspectiveCamera, WebGLRenderer } from 'three';
+import { AxesHelper } from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
 import './style.css';
 
 import { ambientLight, dirLight } from './environment/light';
-import { player } from './objects/player';
+import { loadPlayerModel, player } from './objects/player';
 import { ground } from './environment/ground';
 import { sky } from './environment/sky';
+import { renderer } from './base/renderer';
+import { camera } from './base/camera';
+import { scene } from './base/scene';
 
-const scene = new Scene();
-const camera = new PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-
-const renderer = new WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-const controls = new OrbitControls(camera, document.body.querySelector('canvas'));
+const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 0, 0);
 controls.update();
 
@@ -29,12 +25,16 @@ scene.add(ground);
 scene.add(sky);
 
 // ADD PLAYER
-scene.add(player.group);
-
-camera.position.z = 5;
+async function init() {
+  await loadPlayerModel();
+  scene.add(player.group);
+}
+init();
+scene.add(new AxesHelper(5));
 
 function animate() {
-  player.render();
+  controls.update();
+  player.render(scene);
   renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
