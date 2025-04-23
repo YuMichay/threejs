@@ -49,7 +49,7 @@ class KeyboardControl {
     const x = -Number(this.a) + Number(this.d);
     const y = Number(this.w) + -Number(this.s);
 
-    return new Vector3(x, y, 0);
+    return new Vector3(x, y, 0).normalize();
   }
 }
 

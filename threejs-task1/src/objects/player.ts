@@ -5,14 +5,15 @@ import { createArrowHelper } from './arrow';
 import { keyboardControl } from '../controls/keyboard';
 import { positionIdle } from './playerIdle';
 import { Player } from '../types/player';
+import { footsteps } from './steps';
 
 const loader = new GLTFLoader();
 const group = new Group();
 const clock = new Clock();
 
-export const player: Player = {group, render() {},};
+export const player: Player = {group, render() {}};
 
-export async function loadPlayerModel(): Promise<void> {
+export const loadPlayerModel = async(): Promise<void> => {
   const gltf = await new Promise<GLTF>((resolve, reject) => {
     loader.load(
       '/models/repo.glb',
@@ -25,9 +26,8 @@ export async function loadPlayerModel(): Promise<void> {
   initPlayerFromGLTF(gltf);
 }
 
-function initPlayerFromGLTF(gltf: GLTF) {
+const initPlayerFromGLTF = (gltf: GLTF) => {
   const model = gltf.scene;
-  model.position.z = -0.1;
   model.rotation.set(Math.PI / 2, Math.PI, 0);
 
   const group = new Group();
@@ -47,6 +47,8 @@ function initPlayerFromGLTF(gltf: GLTF) {
   let isMoving = false;
 
   player.render = () => {
+    const delta = clock.getDelta();
+    const time = clock.getElapsedTime() * 1000;
     const direction = keyboardControl.direction.clampLength(0.1, 0.1);
     group.position.add(direction);
 
@@ -67,9 +69,11 @@ function initPlayerFromGLTF(gltf: GLTF) {
       walkAction.play();
       const targetAngle = Math.atan2(direction.y, direction.x) - Math.PI / 2;
       group.rotation.z += (targetAngle - group.rotation.z) * 0.2;
-    }
 
-    const delta = clock.getDelta();
+      footsteps.render(time, group.position, direction);
+    }
+    
+    footsteps.update(time);
     mixer.update(delta);
   };
 }
