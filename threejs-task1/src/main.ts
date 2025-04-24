@@ -7,10 +7,14 @@ import { loadPlayerModel, player } from './objects/player';
 import { renderer } from './base/renderer';
 import { camera } from './base/camera';
 import { scene } from './base/scene';
+import { clouds } from './objects/cloud';
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 0, 0);
 controls.update();
+
+// CLOUDS
+clouds.distributeClouds(30, 500, [60, 100]);
 
 // ADD PLAYER
 async function init() {
