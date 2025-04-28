@@ -3,11 +3,12 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
 import './style.css';
 
-import { loadPlayerModel, player } from './objects/player';
+import { loadPlayerModel, player } from './objects/player/player';
 import { renderer } from './base/renderer';
 import { camera } from './base/camera';
 import { scene } from './base/scene';
-import { clouds } from './objects/cloud';
+import { clouds } from './objects/static/cloud';
+import { bushes } from './objects/static/bush';
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 0, 0);
@@ -15,6 +16,9 @@ controls.update();
 
 // CLOUDS
 clouds.distributeClouds(30, 500, [60, 100]);
+
+// BUSHES
+bushes.distributeBushes(120, 500);
 
 // ADD PLAYER
 async function init() {

@@ -5,7 +5,7 @@ export const effectController = {
   rayleigh: 3,
   mieCoefficient: 0.005,
   mieDirectionalG: 0.7,
-  elevation: 2,
+  elevation: 4,
   azimuth: 180,
   exposure: renderer.toneMappingExposure
 };

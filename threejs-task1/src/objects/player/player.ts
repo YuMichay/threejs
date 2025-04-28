@@ -2,9 +2,9 @@ import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { AnimationMixer, Clock, Group } from "three";
 
 import { createArrowHelper } from './arrow';
-import { keyboardControl } from '../controls/keyboard';
+import { keyboardControl } from '../../controls/keyboard';
 import { positionIdle } from './playerIdle';
-import { Player } from '../types/player';
+import { Player } from '../../types/player';
 import { footsteps } from './steps';
 
 const loader = new GLTFLoader();

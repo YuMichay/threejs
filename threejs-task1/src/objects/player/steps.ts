@@ -1,7 +1,7 @@
 import { CircleGeometry, Group, Mesh, MeshBasicMaterial, TextureLoader, Vector3 } from "three";
 
-import { FADE_DURATION, STEPS_MS } from "../config/constants";
-import { Step } from "../types/step";
+import { FADE_DURATION, STEPS_MS } from "../../config/constants";
+import { Step } from "../../types/step";
 
 const group = new Group();
 

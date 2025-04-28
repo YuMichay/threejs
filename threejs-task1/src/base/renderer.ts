@@ -4,6 +4,6 @@ export const renderer = new WebGLRenderer();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1;
+renderer.toneMappingExposure = 1.5;
 
 document.body.appendChild(renderer.domElement);
