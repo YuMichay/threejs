@@ -37,6 +37,7 @@ const createBush = (): Group => {
 
   bush.scale.setScalar(MathUtils.randFloat(0.8, 1.5));
   bush.rotation.y = Math.random() * Math.PI * 2;
+
   return bush;
 };
 
@@ -59,7 +60,7 @@ const distributeBushes = (count: number, areaSize: number) => {
         MathUtils.randFloatSpread(areaSize),
         0
       );
-    } while (!isPositionValid(position, placedBushes, 4));
+    } while (!isPositionValid(position, placedBushes, 4) || position.distanceTo(new Vector3(0, 0, 0)) < 2);
 
     const bush = createBush();
     bush.position.copy(position);

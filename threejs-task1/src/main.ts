@@ -15,10 +15,10 @@ controls.target.set(0, 0, 0);
 controls.update();
 
 // CLOUDS
-clouds.distributeClouds(30, 500, [60, 100]);
+clouds.distributeClouds(30, 300, [60, 100]);
 
 // BUSHES
-bushes.distributeBushes(120, 500);
+bushes.distributeBushes(200, 300);
 
 // ADD PLAYER
 async function init() {

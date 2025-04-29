@@ -3,7 +3,7 @@ import { Sky } from 'three/addons/objects/Sky.js';
 import { effectController } from '../config/skyEffects';
 
 export const sky = new Sky();
-sky.scale.setScalar( 450000 );
+sky.scale.setScalar( 200000 );
 
 const phi = MathUtils.degToRad( 90 - effectController.elevation );
 const theta = MathUtils.degToRad( effectController.azimuth);

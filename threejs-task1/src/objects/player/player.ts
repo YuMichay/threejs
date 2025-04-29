@@ -1,11 +1,12 @@
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { AnimationMixer, Clock, Group } from "three";
+import { AnimationMixer, Box3, Clock, Group } from "three";
 
 import { createArrowHelper } from './arrow';
 import { keyboardControl } from '../../controls/keyboard';
 import { positionIdle } from './playerIdle';
 import { Player } from '../../types/player';
 import { footsteps } from './steps';
+import { bushes } from '../static/bush';
 
 const loader = new GLTFLoader();
 const group = new Group();
@@ -49,8 +50,26 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
   player.render = () => {
     const delta = clock.getDelta();
     const time = clock.getElapsedTime() * 1000;
+
     const direction = keyboardControl.direction.clampLength(0.1, 0.1);
-    group.position.add(direction);
+    const nextPosition = group.position.clone().add(direction);
+
+    group.position.copy(nextPosition);
+    const playerBox = new Box3().setFromObject(player.group);
+    group.position.sub(direction);
+    
+    let collision = false;
+    for (const bush of bushes.group.children) {
+      const bushBox = new Box3().setFromObject(bush);
+      if (playerBox.intersectsBox(bushBox)) {
+        collision = true;
+        break;
+      }
+    }
+    
+    if (!collision) {
+      group.position.add(direction);
+    }    
 
     const movingNow = direction.lengthSq() > 0.0001;
 
@@ -67,6 +86,7 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
 
     if (isMoving) {
       walkAction.play();
+
       const targetAngle = Math.atan2(direction.y, direction.x) - Math.PI / 2;
       group.rotation.z += (targetAngle - group.rotation.z) * 0.2;
 
