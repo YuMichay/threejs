@@ -7,15 +7,26 @@ import { scene } from './base/scene';
 import { clouds } from './objects/static/cloud';
 import { bushes } from './objects/static/bush';
 import { coins } from './objects/coin/coin';
+import { sceneBounds } from './config/constants';
+
+// GAME START
+let isGameStarted = false;
+
+document.querySelector('#start')?.addEventListener('click', () => {
+  const modal = document.getElementById('modal');
+  if (modal) modal.style.display = 'none';
+
+  isGameStarted = true;
+
+  // COIN
+  coins.generateNewCoins(10, 298, [player.group, bushes.group]);
+});
 
 // CLOUDS
-clouds.distributeClouds(30, 300, [60, 100]);
+clouds.distributeClouds(30, 298, [60, 100]);
 
 // BUSHES
-bushes.distributeBushes(300, 300);
-
-// COIN
-coins.generateNewCoins(10, 300, [player.group, bushes.group]);
+bushes.distributeBushes(298, 298);
 
 // ADD PLAYER
 async function init() {
@@ -25,15 +36,27 @@ async function init() {
 init();
 
 function animate() {
-  player.render();
-  coins.render();
-  
+  if (isGameStarted) {
+    player.render();
+    coins.render();
+  }
+
   renderer.render(scene, camera);
 
-  camera.position.x = player.group.position.x;
-  camera.position.y = player.group.position.y - 6;
-  camera.position.z = player.group.position.z + 2;
+  const playerPosition = player.group.position;
+  
+  // AREA LIMITS FOR PLAYER
+  if (playerPosition.x < sceneBounds.minX) playerPosition.x = sceneBounds.minX;
+  if (playerPosition.x > sceneBounds.maxX) playerPosition.x = sceneBounds.maxX;
+  if (playerPosition.y < sceneBounds.minY) playerPosition.y = sceneBounds.minY;
+  if (playerPosition.y > sceneBounds.maxY) playerPosition.y = sceneBounds.maxY;
+
+  // PLAYER VIEW
+  camera.position.x = playerPosition.x;
+  camera.position.y = playerPosition.y - 6;
+  camera.position.z = playerPosition.z + 2;
 }
+
 renderer.setAnimationLoop(animate);
 
 // RESIZE
