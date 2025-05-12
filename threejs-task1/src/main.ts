@@ -6,7 +6,7 @@ import { camera } from './base/camera';
 import { scene } from './base/scene';
 import { clouds } from './objects/static/cloud';
 import { bushes } from './objects/static/bush';
-import { coins } from './objects/coin/coin';
+import { coins } from './objects/animated/coin/coin';
 import { sceneBounds } from './config/constants';
 
 // GAME START
@@ -19,11 +19,11 @@ document.querySelector('#start')?.addEventListener('click', () => {
   isGameStarted = true;
 
   // COIN
-  coins.generateNewCoins(10, 298, [player.group, bushes.group]);
+  coins.generateNewCoins(10, 290, [player.group, bushes.group]);
 });
 
 // CLOUDS
-clouds.distributeClouds(30, 298, [60, 100]);
+clouds.distributeClouds(50, 298, [50, 100]);
 
 // BUSHES
 bushes.distributeBushes(298, 298);

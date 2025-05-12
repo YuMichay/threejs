@@ -7,7 +7,7 @@ import {
   Vector3,
   Group,
 } from 'three';
-import { isPositionValid } from '../../controls/generateValidPosition';
+import { isPositionValid } from '../../../controls/generateValidPosition';
 
 const group = new Group();
 
