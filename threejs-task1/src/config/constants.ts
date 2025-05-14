@@ -7,3 +7,8 @@ export const sceneBounds = {
   minY: -145,
   maxY: 149
 };
+
+export const COINS_AMOUNT = 10;
+
+export const COLLECT_TIME = 3000;
+export const GAME_TIME = 300;

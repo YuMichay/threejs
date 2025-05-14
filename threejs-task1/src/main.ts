@@ -7,20 +7,14 @@ import { scene } from './base/scene';
 import { clouds } from './objects/static/cloud';
 import { bushes } from './objects/static/bush';
 import { coins } from './objects/animated/coin/coin';
-import { sceneBounds } from './config/constants';
-
-// GAME START
-let isGameStarted = false;
-
-document.querySelector('#start')?.addEventListener('click', () => {
-  const modal = document.getElementById('modal');
-  if (modal) modal.style.display = 'none';
-
-  isGameStarted = true;
-
-  // COIN
-  coins.generateNewCoins(10, 290, [player.group, bushes.group]);
-});
+import { COINS_AMOUNT, GAME_TIME, sceneBounds } from './config/constants';
+import { Clock } from 'three';
+import { updateCoinsDisplay } from './controls/updateCoinsDisplay';
+import { updateTimeDisplay } from './controls/updateTimeDisplay';
+import { gameEnd } from './controls/gameEnd';
+import { coinsManager } from './controls/coinsState';
+import { keyboardControl } from './controls/keyboard';
+import { gamePaused } from './controls/gamePaused';
 
 // CLOUDS
 clouds.distributeClouds(50, 298, [50, 100]);
@@ -35,10 +29,75 @@ async function init() {
 }
 init();
 
+// GAME START
+const clock = new Clock();
+let timeLeft = GAME_TIME;
+let isGameStarted = false;
+let isGamePaused = false;
+let lastTimeUpdate = 0;
+let totalElapsed = 0;
+
+document.querySelector('#start')?.addEventListener('click', () => {
+  const modal = document.getElementById('modal');
+  if (modal) modal.style.display = 'none';
+
+  const field = document.getElementById('field');
+  if (field) field.style.display = 'block';
+
+  isGameStarted = true;
+  coinsManager.reset();
+  timeLeft = GAME_TIME;
+  lastTimeUpdate = 0;
+  clock.start();
+  updateCoinsDisplay(coinsManager.getCoins());
+  updateTimeDisplay(timeLeft);
+  
+  // RESET PLAYER POSITIONS
+  player.group.position.set(0, 0, 0);
+  player.group.rotation.set(0, 0, 0);
+
+  // COIN
+  coins.generateNewCoins(COINS_AMOUNT, 290, [player.group, bushes.group]);
+});
+
 function animate() {
-  if (isGameStarted) {
+  const delta = clock.getDelta();
+
+  if (isGameStarted && !isGamePaused) {
     player.render();
     coins.render();
+
+    totalElapsed += delta;
+
+    if (Math.floor(totalElapsed) > lastTimeUpdate) {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateTimeDisplay(timeLeft);
+        lastTimeUpdate = Math.floor(totalElapsed);
+
+        if (coinsManager.getCoins() === 10) {
+          gameEnd(true);
+          clock.stop();
+          isGameStarted = false;
+        }
+      } else if (timeLeft <= 0) {
+        gameEnd(false);
+        clock.stop();
+        isGameStarted = false;
+      }
+    }
+  }
+
+  if (keyboardControl.esc) {
+    isGamePaused = true;
+    isGameStarted = false;
+    gamePaused(isGamePaused);
+    clock.stop();
+  } else if (isGamePaused && !keyboardControl.esc) {
+    isGamePaused = false;
+    isGameStarted = true;
+    gamePaused(isGamePaused);
+    clock.start();
   }
 
   renderer.render(scene, camera);
@@ -64,4 +123,13 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// LOADING
+window.addEventListener('DOMContentLoaded', () => {
+  const loader = document.getElementById('loader');
+  const app = document.getElementById('app');
+
+  if (loader) loader.style.display = 'none';
+  if (app) app.style.display = 'block';
 });

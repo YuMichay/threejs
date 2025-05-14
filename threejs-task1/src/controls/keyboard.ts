@@ -6,6 +6,8 @@ class KeyboardControl {
   a = false;
   d = false;
   f = false;
+  e = false;
+  esc = false;
 
   constructor() {
     document.addEventListener("keydown", this.onKeyDown);
@@ -28,6 +30,12 @@ class KeyboardControl {
         break;
       case "KeyF":
         this.f = true;
+        break;
+      case "KeyE":
+        this.e = !this.e;
+        break;
+      case "Escape":
+        this.esc = !this.esc;
         break;
     }
   }

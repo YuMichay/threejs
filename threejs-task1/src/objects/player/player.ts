@@ -1,5 +1,5 @@
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { AnimationMixer, Box3, Clock, Group, MeshBasicMaterial, Object3D, Vector3 } from "three";
+import { AnimationMixer, Box3, Clock, Group } from "three";
 
 import { keyboardControl } from '../../controls/keyboard';
 import { positionIdle } from './playerIdle';
@@ -8,15 +8,19 @@ import { footsteps } from './steps';
 import { bushes } from '../static/bush';
 import { coins } from '../animated/coin/coin';
 import { collectLine } from '../animated/coin/collectingLine';
+import { checkBushCollision } from '../../controls/checkBushCollisions';
+import { findClosestCoin } from '../../controls/findClosestCoin';
+import { updateCollectLine } from '../animated/coin/animateCollectline';
+import { COLLECT_TIME } from '../../config/constants';
+import { updateCoinsDisplay } from '../../controls/updateCoinsDisplay';
+import { coinsManager } from '../../controls/coinsState';
 
 const loader = new GLTFLoader();
 const group = new Group();
 const clock = new Clock();
 
-let collectStartTime: number | null = null;
-let collectingCoin: Object3D | null = null;
-let closestCoin: Object3D | null = null;
-let closestDistance: number | null = null;
+let collision = false;
+let nearCoin = false;
 
 export const player: Player = {group, render() {}};
 
@@ -64,73 +68,48 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
     group.position.sub(direction);
     
     // BUSHES COLLISION
-    let collision = false;
-    for (const bush of bushes.group.children) {
-      const bushBox = new Box3().setFromObject(bush);
-      if (playerBox.intersectsBox(bushBox)) {
-        collision = true;
-        break;
-      }
-    }
+    collision = checkBushCollision(playerBox, bushes.group.children);
 
     // COINS COLLECTING
-    let nearCoin = false;
+    const collectingCoin = coinsManager.getCollectingCoin();
+    nearCoin = !!coinsManager.closestCoin;
 
-    for (const coin of coins.group.children) {
-      const distance = coin.position.distanceTo(nextPosition);
-      if (distance < 2) {
-        nearCoin = true;
-        closestDistance = distance;
-        closestCoin = coin;
-        break;
-      }
+    if (!collectingCoin) {
+      coinsManager.setClosestCoin(findClosestCoin(coins.group.children, nextPosition, 2))
     }
 
-    if (keyboardControl.f && !!closestCoin && !collectingCoin) {
-      collectStartTime = time;
-      collectingCoin = closestCoin;
+    if (keyboardControl.f && !!coinsManager.closestCoin && !collectingCoin) {
+      coinsManager.setTime(time);
+      coinsManager.setCollectingCoin(coinsManager.closestCoin);
     }
 
     if (collectingCoin) {
-      if (!keyboardControl.f || closestCoin !== collectingCoin) {
-        collectStartTime = null;
-        collectingCoin = null;
-        closestCoin = null;
-        closestDistance = null;
+      if (!keyboardControl.f || coinsManager.closestCoin !== collectingCoin) {
+        coinsManager.resetCollecting();
+        collectLine.visible = false;
+        coinsManager.setCoinGlow(collectingCoin, false);
       } else {
-        const currentDistance = collectingCoin.position.distanceTo(group.position);
-        if (currentDistance > 3) {
-          collectStartTime = null;
-          collectingCoin = null;
-          closestCoin = null;
-          closestDistance = null;
+        const currentDistance = collectingCoin.position.distanceTo(nextPosition);
+        if (currentDistance > 2) {
+          nearCoin = false;
+          coinsManager.resetCollecting();
           collectLine.visible = false;
+          coinsManager.setCoinGlow(collectingCoin, false);
           return;
+        } else {
+          coinsManager.setCoinGlow(collectingCoin, true);
+          updateCollectLine(group.position, collectingCoin.position, time, collectLine);
         }
 
-        const start = group.position.clone();
-        start.z += 1;
-        const end = collectingCoin.position.clone();
-        end.z += 0.3;
-        const center = new Vector3().addVectors(start, end).multiplyScalar(0.5);
-        const dir = new Vector3().subVectors(end, start);
-        const length = dir.length();
-  
-        collectLine.position.copy(center);
-        collectLine.scale.set(length, 1.2, 1);
-        collectLine.rotation.set(0, 0, Math.PI / 2);
-        collectLine.visible = true;
-
-        const pulse = Math.sin(time * 0.01) * 0.3 + 0.7;
-        (collectLine.material as MeshBasicMaterial).opacity = pulse;
-    
-        if (time - (collectStartTime ?? 0) >= 3000) {
+        if (time - (coinsManager.collectStartTime ?? 0) >= COLLECT_TIME) {
           coins.group.remove(collectingCoin);
-    
-          collectStartTime = null;
-          collectingCoin = null;
-          closestCoin = null;
-          closestDistance = null;
+          coinsManager.collectCoins();
+          
+          const collectedCoins = coinsManager.getCoins();
+          updateCoinsDisplay(collectedCoins);
+          
+          coinsManager.resetCollecting();
+          coinsManager.setCoinGlow(collectingCoin, false);
           collectLine.visible = false;
         }
       }
