@@ -57,18 +57,28 @@ canvas {
 
 #game-message, #pause-message {
   display: none;
+  cursor: default;
 }
 
-#field {
+#field, #gameplay {
   display: none;
   padding: 16px;
   position: absolute;
-  top: 8px;
   left: 8px;
   background-color: #3b883f;
   color: white;
   border: 2px solid #4CAF50;
   border-radius: 24px;
+}
+
+#field {
+  top: 8px;
+}
+
+#gameplay {
+  bottom: 8px;
+  opacity: 0.8;
+  font-size: 0.825rem;
 }
 
 #music {

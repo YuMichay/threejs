@@ -20,7 +20,7 @@ import { coinsManager } from './controls/coinsState';
 import { keyboardControl } from './controls/keyboard';
 import { gamePaused } from './controls/gamePaused';
 import { loadingManager } from './controls/loadingManager';
-import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic, singEffect, stopAllEffects } from './controls/listener';
+import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic, singEffect, stopAllEffects, winEffect, loseEffect } from './controls/listener';
 import { dirLight, dirLightOffset } from './environment/light';
 
 // CLOUDS
@@ -48,10 +48,12 @@ let totalElapsed = 0;
 const soundControl = document.getElementById('music');
 const modal = document.getElementById('modal');
 const field = document.getElementById('field');
+const gameplay = document.getElementById('gameplay');
 
 document.querySelector('#start')?.addEventListener('click', () => {  
   if (modal) modal.style.display = 'none';
   if (field) field.style.display = 'block';
+  if (gameplay) gameplay.style.display = 'block';
 
   isGameStarted = true;
   coinsManager.reset();
@@ -64,15 +66,19 @@ document.querySelector('#start')?.addEventListener('click', () => {
   // RESET PAUSE MODE
   keyboardControl.esc = false;
 
-  // ADD MUSIC
-  camera.add(listener);
-  if (isMusicOn) startMusic();
-  
+  // RESET EFFECTS
+  if (winEffect.isPlaying) winEffect.stop();
+  if (loseEffect.isPlaying) loseEffect.stop();
+
   // RESET PLAYER POSITIONS
   player.group.position.set(0, 0, 0);
   player.group.rotation.set(0, 0, 0);
 
-  // COIN
+  // ADD MUSIC
+  camera.add(listener);
+  if (isMusicOn) startMusic();
+
+  // ADD COINS
   coins.generateNewCoins(COINS_AMOUNT, 290, [player.group, bushes.group]);
 });
 
@@ -122,6 +128,7 @@ function animate() {
         }
       } else {
         gameEnd(false);
+        stopAllEffects();
         clock.stop();
         isGameStarted = false;
 

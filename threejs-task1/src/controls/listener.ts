@@ -1,4 +1,5 @@
 import { AudioListener, Audio, AudioLoader } from 'three';
+import { hearts } from '../objects/animated/hearts/hearts';
 
 export const listener = new AudioListener();
 export const backgroundMusic = new Audio(listener);
@@ -12,6 +13,7 @@ export const loseEffect = new Audio(listener);
 const backgroundPlaylist = ['sounds/background1.mp3', 'sounds/background2.mp3'];
 let currentTrack = 0;
 let bufferLoaded: AudioBuffer | null = null;
+let singBuffer: AudioBuffer | null = null;
 
 export let isMusicOn = false;
 let isPlaying = false;
@@ -54,7 +56,7 @@ const loadAndPlay = () => {
     bufferLoaded = buffer;
     backgroundMusic.setBuffer(buffer);
     backgroundMusic.setLoop(false);
-    backgroundMusic.setVolume(0.3);
+    backgroundMusic.setVolume(0.5);
     backgroundMusic.play();
     isPlaying = true;
 
@@ -68,9 +70,7 @@ const handleEnded = () => {
   bufferLoaded = null;
   isPlaying = false;
 
-  if (isMusicOn) {
-    loadAndPlay();
-  }
+  if (isMusicOn) loadAndPlay();
 };
 
 // SOUND EFFECTS LOADING
@@ -81,11 +81,14 @@ audioLoader.load('sounds/step.mp3', (buffer) => {
   footstepsEffect.setLoop(true);
 });
 audioLoader.load('sounds/sing.mp3', (buffer) => {
+  singBuffer = buffer;
   singEffect.setBuffer(buffer);
   singEffect.setVolume(0.5);
   singEffect.setLoop(false);
+
   singEffect.onEnded = () => {
-    backgroundMusic.setVolume(0.5);
+    if (backgroundMusic.isPlaying) backgroundMusic.setVolume(0.5);
+    hearts.setActive(false);
   };
 });
 audioLoader.load('sounds/collecting.mp3', (buffer) => {
@@ -98,16 +101,31 @@ audioLoader.load('sounds/coin-recieved.mp3', (buffer) => {
   collectedCoinEffect.setVolume(0.2);
   collectedCoinEffect.setLoop(false);
 });
-audioLoader.load('sounds/win.mp3', (buffer) => {
+audioLoader.load('sounds/gwenchana-win.mp3', (buffer) => {
   winEffect.setBuffer(buffer);
-  winEffect.setVolume(0.5);
+  winEffect.setVolume(2);
   winEffect.setLoop(false);
 });
-audioLoader.load('sounds/lose.mp3', (buffer) => {
+audioLoader.load('sounds/gwenchana-lose.mp3', (buffer) => {
   loseEffect.setBuffer(buffer);
-  loseEffect.setVolume(0.5);
+  loseEffect.setVolume(2);
   loseEffect.setLoop(false);
 });
+
+export const playSingEffect = () => {
+  backgroundMusic.setVolume(0);
+
+  if (singBuffer) {
+    singEffect.stop();
+    singEffect.setBuffer(singBuffer);
+    singEffect.play();
+
+    singEffect.onEnded = () => {
+      if (isPlaying) backgroundMusic.setVolume(0.5);
+      hearts.setActive(false);
+    };
+  }
+}
 
 export const stopAllEffects = () => {
   if (footstepsEffect.isPlaying) footstepsEffect.stop();

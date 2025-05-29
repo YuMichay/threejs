@@ -13,7 +13,8 @@ import { COLLECT_TIME } from '../../config/constants';
 import { updateCoinsDisplay } from '../../controls/updateCoinsDisplay';
 import { coinsManager } from '../../controls/coinsState';
 import { loadingManager } from '../../controls/loadingManager';
-import { backgroundMusic, collectedCoinEffect, collectingInProgressEffect, footstepsEffect, singEffect } from '../../controls/listener';
+import { collectedCoinEffect, collectingInProgressEffect, footstepsEffect, playSingEffect } from '../../controls/listener';
+import { hearts } from '../animated/hearts/hearts';
 
 const loader = new GLTFLoader(loadingManager);
 const group = new Group();
@@ -116,11 +117,9 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
 
     // SINGING
     if (keyboardControl.e) {
-      if (backgroundMusic.isPlaying) {
-        backgroundMusic.setVolume(0.1);
-        singEffect.play();
-        keyboardControl.e = false;
-      }
+      playSingEffect();
+      hearts.setActive(true);
+      keyboardControl.e = false;
     }
 
     // LIMIT MOVING
@@ -161,5 +160,6 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
     
     footsteps.update(time);
     mixer.update(delta);
+    hearts.update(time, group.position.clone());
   };
 }
