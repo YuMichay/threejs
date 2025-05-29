@@ -31,9 +31,6 @@ class KeyboardControl {
       case "KeyF":
         this.f = true;
         break;
-      case "KeyE":
-        this.e = !this.e;
-        break;
       case "Escape":
         this.esc = !this.esc;
         break;
@@ -56,6 +53,9 @@ class KeyboardControl {
         break;
       case "KeyF":
         this.f = false;
+        break;
+      case "KeyE":
+        this.e = !this.e;
         break;
     }
   }

@@ -1,4 +1,5 @@
 import { coinsManager } from "./coinsState";
+import { loseEffect, winEffect } from "./listener";
 
 export const gameEnd = (isWon: boolean) => {
   const modal = document.getElementById('modal');
@@ -14,4 +15,7 @@ export const gameEnd = (isWon: boolean) => {
       ? `You won! Collected all coins!`
       : `Time's up! Collected ${coinsManager.getCoins()} coins. Let's try again!`;
   }
+
+  if (isWon) winEffect.play();
+  else loseEffect.play();
 }

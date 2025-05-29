@@ -7,14 +7,13 @@ import { Player } from '../../types/player';
 import { footsteps } from './steps';
 import { bushes } from '../static/bush';
 import { coins } from '../animated/coin/coin';
-import { collectLine } from '../animated/coin/collectingLine';
 import { checkBushCollision } from '../../controls/checkBushCollisions';
 import { findClosestCoin } from '../../controls/findClosestCoin';
-import { updateCollectLine } from '../animated/coin/animateCollectline';
 import { COLLECT_TIME } from '../../config/constants';
 import { updateCoinsDisplay } from '../../controls/updateCoinsDisplay';
 import { coinsManager } from '../../controls/coinsState';
 import { loadingManager } from '../../controls/loadingManager';
+import { backgroundMusic, collectedCoinEffect, collectingInProgressEffect, footstepsEffect, singEffect } from '../../controls/listener';
 
 const loader = new GLTFLoader(loadingManager);
 const group = new Group();
@@ -87,32 +86,40 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
     if (collectingCoin) {
       if (!keyboardControl.f || coinsManager.closestCoin !== collectingCoin) {
         coinsManager.resetCollecting();
-        collectLine.visible = false;
         coinsManager.setCoinGlow(collectingCoin, false);
       } else {
+        if (!collectingInProgressEffect.isPlaying) collectingInProgressEffect.play();
         const currentDistance = collectingCoin.position.distanceTo(nextPosition);
         if (currentDistance > 2) {
           nearCoin = false;
           coinsManager.resetCollecting();
-          collectLine.visible = false;
           coinsManager.setCoinGlow(collectingCoin, false);
           return;
         } else {
           coinsManager.setCoinGlow(collectingCoin, true);
-          updateCollectLine(group.position, collectingCoin.position, time, collectLine);
         }
 
         if (time - (coinsManager.collectStartTime ?? 0) >= COLLECT_TIME) {
           coins.group.remove(collectingCoin);
           coinsManager.collectCoins();
+          collectingInProgressEffect.stop();
+          collectedCoinEffect.play();
           
           const collectedCoins = coinsManager.getCoins();
           updateCoinsDisplay(collectedCoins);
           
           coinsManager.resetCollecting();
           coinsManager.setCoinGlow(collectingCoin, false);
-          collectLine.visible = false;
         }
+      }
+    }
+
+    // SINGING
+    if (keyboardControl.e) {
+      if (backgroundMusic.isPlaying) {
+        backgroundMusic.setVolume(0.1);
+        singEffect.play();
+        keyboardControl.e = false;
       }
     }
 
@@ -133,10 +140,18 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
       walkAction.paused = true;
       isMoving = false;
       positionIdle(gltf);
+
+      if (footstepsEffect.isPlaying) {
+        footstepsEffect.stop();
+      }
     }
 
     if (isMoving) {
       walkAction.play();
+
+      if (!footstepsEffect.isPlaying) {
+        footstepsEffect.play();
+      }
 
       const targetAngle = Math.atan2(direction.y, direction.x) - Math.PI / 2;
       group.rotation.z += (targetAngle - group.rotation.z) * 0.2;

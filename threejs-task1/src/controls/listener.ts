@@ -1,7 +1,13 @@
 import { AudioListener, Audio, AudioLoader } from 'three';
 
 export const listener = new AudioListener();
-export const sound = new Audio(listener);
+export const backgroundMusic = new Audio(listener);
+export const footstepsEffect = new Audio(listener);
+export const singEffect = new Audio(listener);
+export const collectingInProgressEffect = new Audio(listener);
+export const collectedCoinEffect = new Audio(listener);
+export const winEffect = new Audio(listener);
+export const loseEffect = new Audio(listener);
 
 const backgroundPlaylist = ['sounds/background1.mp3', 'sounds/background2.mp3'];
 let currentTrack = 0;
@@ -12,14 +18,16 @@ let isPlaying = false;
 
 const audioLoader = new AudioLoader();
 
+// BACKGROUND MUSIC LOGIC
+
 export const startMusic = () => {
   isMusicOn = true;
 
   if (bufferLoaded && !isPlaying) {
-    sound.setBuffer(bufferLoaded);
-    sound.setLoop(false);
-    sound.setVolume(0.5);
-    sound.play();
+    backgroundMusic.setBuffer(bufferLoaded);
+    backgroundMusic.setLoop(false);
+    backgroundMusic.setVolume(0.5);
+    backgroundMusic.play();
     isPlaying = true;
   } else if (!bufferLoaded) {
     loadAndPlay();
@@ -30,27 +38,27 @@ export const stopMusic = () => {
   isMusicOn = false;
   isPlaying = false;
   
-  sound.stop();
+  backgroundMusic.stop();
 };
 
 export const pauseMusic = () => {
-  sound.context.suspend();
+  backgroundMusic.context.suspend();
 };
 
 export const resumeMusic = () => {
-  sound.context.resume();
+  backgroundMusic.context.resume();
 };
 
 const loadAndPlay = () => {
   audioLoader.load(backgroundPlaylist[currentTrack], (buffer) => {
     bufferLoaded = buffer;
-    sound.setBuffer(buffer);
-    sound.setLoop(false);
-    sound.setVolume(0.5);
-    sound.play();
+    backgroundMusic.setBuffer(buffer);
+    backgroundMusic.setLoop(false);
+    backgroundMusic.setVolume(0.3);
+    backgroundMusic.play();
     isPlaying = true;
 
-    const source = sound.source;
+    const source = backgroundMusic.source;
     if (source) source.addEventListener('ended', handleEnded);
   });
 };
@@ -64,3 +72,46 @@ const handleEnded = () => {
     loadAndPlay();
   }
 };
+
+// SOUND EFFECTS LOADING
+audioLoader.load('sounds/step.mp3', (buffer) => {
+  footstepsEffect.setBuffer(buffer);
+  footstepsEffect.setVolume(0.1);
+  footstepsEffect.setPlaybackRate(2);
+  footstepsEffect.setLoop(true);
+});
+audioLoader.load('sounds/sing.mp3', (buffer) => {
+  singEffect.setBuffer(buffer);
+  singEffect.setVolume(0.5);
+  singEffect.setLoop(false);
+  singEffect.onEnded = () => {
+    backgroundMusic.setVolume(0.5);
+  };
+});
+audioLoader.load('sounds/collecting.mp3', (buffer) => {
+  collectingInProgressEffect.setBuffer(buffer);
+  collectingInProgressEffect.setVolume(0.3);
+  collectingInProgressEffect.setLoop(true);
+});
+audioLoader.load('sounds/coin-recieved.mp3', (buffer) => {
+  collectedCoinEffect.setBuffer(buffer);
+  collectedCoinEffect.setVolume(0.2);
+  collectedCoinEffect.setLoop(false);
+});
+audioLoader.load('sounds/win.mp3', (buffer) => {
+  winEffect.setBuffer(buffer);
+  winEffect.setVolume(0.5);
+  winEffect.setLoop(false);
+});
+audioLoader.load('sounds/lose.mp3', (buffer) => {
+  loseEffect.setBuffer(buffer);
+  loseEffect.setVolume(0.5);
+  loseEffect.setLoop(false);
+});
+
+export const stopAllEffects = () => {
+  if (footstepsEffect.isPlaying) footstepsEffect.stop();
+  if (singEffect.isPlaying) singEffect.stop();
+  if (collectingInProgressEffect.isPlaying) collectingInProgressEffect.stop();
+  if (collectedCoinEffect.isPlaying) collectedCoinEffect.stop();
+}

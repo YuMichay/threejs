@@ -20,7 +20,7 @@ import { coinsManager } from './controls/coinsState';
 import { keyboardControl } from './controls/keyboard';
 import { gamePaused } from './controls/gamePaused';
 import { loadingManager } from './controls/loadingManager';
-import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic } from './controls/listener';
+import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic, singEffect, stopAllEffects } from './controls/listener';
 import { dirLight, dirLightOffset } from './environment/light';
 
 // CLOUDS
@@ -83,7 +83,9 @@ function animate() {
     if (keyboardControl.esc && !isGamePaused) {
       isGamePaused = true;
       clock.stop();
+      if (singEffect.isPlaying) singEffect.stop();
       gamePaused(true);
+      stopAllEffects();
 
       if (isMusicOn) pauseMusic();
     } else if (!keyboardControl.esc && isGamePaused) {
@@ -109,6 +111,7 @@ function animate() {
 
         if (coinsManager.getCoins() === 10) {
           gameEnd(true);
+          stopAllEffects();
           clock.stop();
           isGameStarted = false;
 
