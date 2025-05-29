@@ -14,8 +14,9 @@ import { updateCollectLine } from '../animated/coin/animateCollectline';
 import { COLLECT_TIME } from '../../config/constants';
 import { updateCoinsDisplay } from '../../controls/updateCoinsDisplay';
 import { coinsManager } from '../../controls/coinsState';
+import { loadingManager } from '../../controls/loadingManager';
 
-const loader = new GLTFLoader();
+const loader = new GLTFLoader(loadingManager);
 const group = new Group();
 const clock = new Clock();
 

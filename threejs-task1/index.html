@@ -16,15 +16,10 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        background-color: #3b883f;
         z-index: 10;
       }
-    
-      #loader img {
-        width: 72px;
-        height: 72px;
-        animation: spin 1.5s linear infinite;
-      }
-    
+
       @keyframes spin {
         from {
           transform: rotateY(0deg);
@@ -33,6 +28,12 @@
           transform: rotateY(360deg);
         }
       }
+
+      #loader > img {
+        width: 72px;
+        height: 72px;
+        animation: spin 1.5s linear infinite;
+      }
     
       #app {
         display: none;
@@ -40,13 +41,13 @@
     </style>
   </head>
   <body>
-    <div id="loader">
-      <img src="coin.ico" alt="Loading..." />
-    </div>
     <div id="app">
       <div id="modal">
         <p id="game-message"></p>
         <button id="start">Game Start</button>
+      </div>
+      <div id="modal-pause">
+        <p id="pause-message">Game is paused</p>
       </div>
       <div id="field">
         <div>
@@ -57,7 +58,13 @@
           <span>Time: </span>
           <span id="time">05:00</span>
         </div>
+        <div id="music" style="opacity: 0.5">
+          <img src="assets/music-on.svg" alt="music" width="25" height="25">
+        </div>
       </div>
+    </div>
+    <div id="loader">
+      <img src="coin.ico" alt="Loading..." />
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

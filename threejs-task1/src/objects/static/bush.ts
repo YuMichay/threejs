@@ -25,6 +25,8 @@ const createBush = (): Group => {
       new SphereGeometry(0.5 + Math.random() * 0.2, 16, 16),
       bushMaterial
     );
+    sphere.castShadow = true;
+    sphere.receiveShadow = true;
 
     sphere.position.set(
       (Math.random() - 0.5) * 1,

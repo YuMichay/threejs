@@ -23,6 +23,8 @@ const createCoin = (): Mesh => {
   const geometry = new CylinderGeometry(0.3, 0.3, 0.1, 32);
   const mesh = new Mesh(geometry, coinMaterial.clone());
   mesh.rotation.x = Math.PI;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
 
   return mesh;
 };

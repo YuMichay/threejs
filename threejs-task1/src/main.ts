@@ -1,26 +1,33 @@
 import './style.css';
 
-import { loadPlayerModel, player } from './objects/player/player';
+import { Clock } from 'three';
+
 import { renderer } from './base/renderer';
 import { camera } from './base/camera';
 import { scene } from './base/scene';
+
+import { loadPlayerModel, player } from './objects/player/player';
 import { clouds } from './objects/static/cloud';
 import { bushes } from './objects/static/bush';
 import { coins } from './objects/animated/coin/coin';
+
 import { COINS_AMOUNT, GAME_TIME, sceneBounds } from './config/constants';
-import { Clock } from 'three';
+
 import { updateCoinsDisplay } from './controls/updateCoinsDisplay';
 import { updateTimeDisplay } from './controls/updateTimeDisplay';
 import { gameEnd } from './controls/gameEnd';
 import { coinsManager } from './controls/coinsState';
 import { keyboardControl } from './controls/keyboard';
 import { gamePaused } from './controls/gamePaused';
+import { loadingManager } from './controls/loadingManager';
+import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic } from './controls/listener';
+import { dirLight, dirLightOffset } from './environment/light';
 
 // CLOUDS
 clouds.distributeClouds(50, 298, [50, 100]);
 
 // BUSHES
-bushes.distributeBushes(298, 298);
+bushes.distributeBushes(300, 290);
 
 // ADD PLAYER
 async function init() {
@@ -37,11 +44,13 @@ let isGamePaused = false;
 let lastTimeUpdate = 0;
 let totalElapsed = 0;
 
-document.querySelector('#start')?.addEventListener('click', () => {
-  const modal = document.getElementById('modal');
-  if (modal) modal.style.display = 'none';
+// DOM ELEMENTS
+const soundControl = document.getElementById('music');
+const modal = document.getElementById('modal');
+const field = document.getElementById('field');
 
-  const field = document.getElementById('field');
+document.querySelector('#start')?.addEventListener('click', () => {  
+  if (modal) modal.style.display = 'none';
   if (field) field.style.display = 'block';
 
   isGameStarted = true;
@@ -51,6 +60,13 @@ document.querySelector('#start')?.addEventListener('click', () => {
   clock.start();
   updateCoinsDisplay(coinsManager.getCoins());
   updateTimeDisplay(timeLeft);
+
+  // RESET PAUSE MODE
+  keyboardControl.esc = false;
+
+  // ADD MUSIC
+  camera.add(listener);
+  if (isMusicOn) startMusic();
   
   // RESET PLAYER POSITIONS
   player.group.position.set(0, 0, 0);
@@ -62,6 +78,22 @@ document.querySelector('#start')?.addEventListener('click', () => {
 
 function animate() {
   const delta = clock.getDelta();
+
+  if (isGameStarted) {
+    if (keyboardControl.esc && !isGamePaused) {
+      isGamePaused = true;
+      clock.stop();
+      gamePaused(true);
+
+      if (isMusicOn) pauseMusic();
+    } else if (!keyboardControl.esc && isGamePaused) {
+      isGamePaused = false;
+      clock.start();
+      gamePaused(false);
+
+      if (isMusicOn) resumeMusic();
+    }
+  }
 
   if (isGameStarted && !isGamePaused) {
     player.render();
@@ -79,25 +111,23 @@ function animate() {
           gameEnd(true);
           clock.stop();
           isGameStarted = false;
+
+          if (isMusicOn) {
+            stopMusic();
+            if (soundControl) soundControl.style.opacity = '0.5';
+          }
         }
-      } else if (timeLeft <= 0) {
+      } else {
         gameEnd(false);
         clock.stop();
         isGameStarted = false;
+
+        if (isMusicOn) {
+          stopMusic();
+          if (soundControl) soundControl.style.opacity = '0.5';
+        }
       }
     }
-  }
-
-  if (keyboardControl.esc) {
-    isGamePaused = true;
-    isGameStarted = false;
-    gamePaused(isGamePaused);
-    clock.stop();
-  } else if (isGamePaused && !keyboardControl.esc) {
-    isGamePaused = false;
-    isGameStarted = true;
-    gamePaused(isGamePaused);
-    clock.start();
   }
 
   renderer.render(scene, camera);
@@ -114,9 +144,23 @@ function animate() {
   camera.position.x = playerPosition.x;
   camera.position.y = playerPosition.y - 6;
   camera.position.z = playerPosition.z + 2;
+
+  dirLight.position.copy(playerPosition.clone().add(dirLightOffset));
+  dirLight.target = player.group;
 }
 
 renderer.setAnimationLoop(animate);
+
+// SOUND ON/OFF
+document.querySelector('#music')?.addEventListener('click', () => {
+  if (isMusicOn) {
+    stopMusic();
+    if (soundControl) soundControl.style.opacity = '0.5';
+  } else {
+    startMusic();
+    if (soundControl) soundControl.style.opacity = '1';
+  }
+});
 
 // RESIZE
 window.addEventListener('resize', () => {
@@ -126,10 +170,14 @@ window.addEventListener('resize', () => {
 });
 
 // LOADING
-window.addEventListener('DOMContentLoaded', () => {
-  const loader = document.getElementById('loader');
-  const app = document.getElementById('app');
+loadingManager.onLoad = () => {
+  requestAnimationFrame(() => {
+    const loader = document.getElementById('loader');
+    if (loader) loader.style.display = 'none';
 
-  if (loader) loader.style.display = 'none';
-  if (app) app.style.display = 'block';
-});
+    const app = document.getElementById('app');
+    if (app) app.style.display = 'block';  
+
+    renderer.setAnimationLoop(animate);
+  });
+};

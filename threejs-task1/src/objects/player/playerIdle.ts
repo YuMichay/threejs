@@ -1,3 +1,4 @@
+import { Mesh } from 'three';
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 const legNames = [
@@ -12,8 +13,13 @@ export const positionIdle = (gltf: GLTF) => {
     gltf.scene.traverse((child) => {
       if (legNames.includes(child.name)) {
         child.rotation.set(0, 0, 0);
-        child.position.set(0, 0, 0);
+        child.position.set(0, 0, -1);
         child.scale.set(1, 1, 1);
+      }
+
+      if (child instanceof Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = false;
       }
     });
   }

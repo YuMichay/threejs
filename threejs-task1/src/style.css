@@ -1,10 +1,9 @@
 body {
   margin: 0;
   padding: 0;
-  display: flex;
-  place-items: center;
   overflow: hidden;
   position: relative;
+  background-color: #3b883f;
   font-family: "Ubuntu", sans-serif;
 }
 
@@ -13,7 +12,7 @@ canvas {
   max-height: 100vh;
 }
 
-#modal {
+#modal, #modal-pause {
   position: fixed;
   top: 0;
   left: 0;
@@ -27,7 +26,11 @@ canvas {
   z-index: 10;
 }
 
-#modal p {
+#modal-pause {
+  display: none;
+}
+
+#modal p, #modal-pause p {
   padding: 1rem 2rem;
   font-size: 1.5rem;
   color: white;
@@ -52,7 +55,7 @@ canvas {
   background-color: #3b883f;
 }
 
-#game-message {
+#game-message, #pause-message {
   display: none;
 }
 
@@ -66,4 +69,9 @@ canvas {
   color: white;
   border: 2px solid #4CAF50;
   border-radius: 24px;
+}
+
+#music {
+  margin-top: 8px;
+  cursor: pointer;
 }

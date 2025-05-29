@@ -12,7 +12,8 @@ const group = new Group();
 const cloudMaterial = new MeshStandardMaterial({
   color: 0xffffff,
   roughness: 1,
-  metalness: 0
+  metalness: 0,
+  fog: false,
 });
 
 const createCloud = (): Group => {
@@ -36,6 +37,7 @@ const createCloud = (): Group => {
       1 + Math.random() * 0.4
     );
 
+    mesh.receiveShadow = true;
     cloud.add(mesh);
   }
 
@@ -86,6 +88,9 @@ const distributeClouds = (
     }
 
     cloudGroup.position.set(x, y, z);
+    cloudGroup.castShadow = true;
+    cloudGroup.receiveShadow = true;
+
     clouds.group.add(cloudGroup);
   }
 };

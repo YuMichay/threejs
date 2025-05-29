@@ -1,18 +1,17 @@
-import { MathUtils, Spherical, Vector3 } from 'three';
-import { Sky } from 'three/addons/objects/Sky.js';
-import { effectController } from '../config/skyEffects';
+import { CanvasTexture, LinearFilter } from 'three';
 
-export const sky = new Sky();
-sky.scale.setScalar( 200000 );
+const gradientCanvas = document.createElement('canvas');
+gradientCanvas.width = 1;
+gradientCanvas.height = 256;
 
-const phi = MathUtils.degToRad( 90 - effectController.elevation );
-const theta = MathUtils.degToRad( effectController.azimuth);
-const spherical = new Spherical(1, phi, theta);
-const sun = new Vector3().setFromSpherical(spherical);
+const ctx = gradientCanvas.getContext('2d') as CanvasRenderingContext2D;
+const gradient = ctx.createLinearGradient(0, 0, 0, 256) as CanvasGradient;
+gradient.addColorStop(0, '#77B4DB');
+gradient.addColorStop(1, '#FFFFFF');
 
-const uniforms = sky.material.uniforms;
-uniforms[ 'turbidity' ].value = effectController.turbidity;
-uniforms[ 'rayleigh' ].value = effectController.rayleigh;
-uniforms[ 'mieCoefficient' ].value = effectController.mieCoefficient;
-uniforms[ 'mieDirectionalG' ].value = effectController.mieDirectionalG;
-uniforms[ 'sunPosition' ].value.copy( sun );
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, 1, 256);
+
+export const backgroundTexture = new CanvasTexture(gradientCanvas);
+backgroundTexture.magFilter = LinearFilter;
+backgroundTexture.minFilter = LinearFilter;
