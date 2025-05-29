@@ -6,6 +6,8 @@ import { renderer } from './base/renderer';
 import { camera } from './base/camera';
 import { scene } from './base/scene';
 
+import { dirLight, dirLightOffset } from './environment/light';
+
 import { loadPlayerModel, player } from './objects/player/player';
 import { clouds } from './objects/static/cloud';
 import { bushes } from './objects/static/bush';
@@ -21,7 +23,6 @@ import { keyboardControl } from './controls/keyboard';
 import { gamePaused } from './controls/gamePaused';
 import { loadingManager } from './controls/loadingManager';
 import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic, singEffect, stopAllEffects, winEffect, loseEffect } from './controls/listener';
-import { dirLight, dirLightOffset } from './environment/light';
 
 // CLOUDS
 clouds.distributeClouds(50, 298, [50, 100]);

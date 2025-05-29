@@ -103,12 +103,12 @@ audioLoader.load('sounds/coin-recieved.mp3', (buffer) => {
 });
 audioLoader.load('sounds/gwenchana-win.mp3', (buffer) => {
   winEffect.setBuffer(buffer);
-  winEffect.setVolume(2);
+  winEffect.setVolume(3);
   winEffect.setLoop(false);
 });
 audioLoader.load('sounds/gwenchana-lose.mp3', (buffer) => {
   loseEffect.setBuffer(buffer);
-  loseEffect.setVolume(2);
+  loseEffect.setVolume(4);
   loseEffect.setLoop(false);
 });
 
