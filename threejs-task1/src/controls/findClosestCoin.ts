@@ -1,11 +1,19 @@
-import { Object3D, Vector3 } from 'three';
+import { Mesh, Vector3 } from 'three';
+import { CoinData } from '../types/coins';
 
-export const findClosestCoin = (coins: Object3D[], position: Vector3, radius: number): Object3D | null => {
-  for (const coin of coins) {
-    const distance = coin.position.distanceTo(position);
-    if (distance < radius) {
-      return coin;
+export const findClosestCoin = (coinData: CoinData[], position: Vector3, radius: number): Mesh | null => {
+  let closest: Mesh | null = null;
+  let minDist = radius;
+
+  for (const coin of coinData) {
+    if (coin.collected) continue;
+
+    const dist = coin.position.distanceTo(position);
+    if (dist < minDist) {
+      minDist = dist;
+      closest = coin.object;
     }
   }
-  return null;
+
+  return closest;
 };

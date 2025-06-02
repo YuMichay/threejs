@@ -1,4 +1,5 @@
 import {
+  Box3,
   Group,
   MathUtils,
   Mesh,
@@ -9,6 +10,7 @@ import {
 import { isPositionValid } from '../../controls/generateValidPosition';
 
 const group = new Group();
+const bushBoxes: Box3[] = [];
 
 const bushMaterial = new MeshStandardMaterial({
   color: 0x228b22,
@@ -67,9 +69,12 @@ const distributeBushes = (count: number, areaSize: number) => {
     const bush = createBush();
     bush.position.copy(position);
 
+    const bushBox = new Box3().setFromObject(bush);
+    bushBoxes.push(bushBox);
+
     group.add(bush);
     placedBushes.push(bush);
   }
 };
 
-export const bushes = { group, addBush, distributeBushes };
+export const bushes = { group, bushBoxes, addBush, distributeBushes };

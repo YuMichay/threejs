@@ -1,8 +1,7 @@
-import { Box3, Object3D, Object3DEventMap } from 'three';
+import { Box3 } from 'three';
 
-export const checkBushCollision = (playerBox: Box3, bushes: Object3D<Object3DEventMap>[]): boolean => {
-  for (const bush of bushes) {
-    const bushBox = new Box3().setFromObject(bush);
+export const checkBushCollision = (playerBox: Box3, bushBoxes: Box3[]): boolean => {
+  for (const bushBox of bushBoxes) {
     if (playerBox.intersectsBox(bushBox)) {
       return true;
     }

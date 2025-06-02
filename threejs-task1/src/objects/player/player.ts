@@ -69,14 +69,14 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
     group.position.sub(direction);
     
     // BUSHES COLLISION
-    collision = checkBushCollision(playerBox, bushes.group.children);
+    collision = checkBushCollision(playerBox, bushes.bushBoxes);
 
     // COINS COLLECTING
     const collectingCoin = coinsManager.getCollectingCoin();
     nearCoin = !!coinsManager.closestCoin;
 
     if (!collectingCoin) {
-      coinsManager.setClosestCoin(findClosestCoin(coins.group.children, nextPosition, 2))
+      coinsManager.setClosestCoin(findClosestCoin(coins.coinData, nextPosition, 2))
     }
 
     if (keyboardControl.f && !!coinsManager.closestCoin && !collectingCoin) {
@@ -101,7 +101,11 @@ const initPlayerFromGLTF = (gltf: GLTF) => {
         }
 
         if (time - (coinsManager.collectStartTime ?? 0) >= COLLECT_TIME) {
-          coins.group.remove(collectingCoin);
+          const coinEntry = coins.coinData.find(coin => coin.object === collectingCoin);
+          if (coinEntry) {
+            coinEntry.collected = true;
+            coins.group.remove(coinEntry.object);
+          }
           coinsManager.collectCoins();
           collectingInProgressEffect.stop();
           collectedCoinEffect.play();

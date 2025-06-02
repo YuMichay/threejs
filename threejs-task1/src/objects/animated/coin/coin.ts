@@ -8,8 +8,10 @@ import {
   Group,
 } from 'three';
 import { isPositionValid } from '../../../controls/generateValidPosition';
+import { CoinData } from '../../../types/coins';
 
 const group = new Group();
+const coinData: CoinData[] = [];
 
 const coinMaterial = new MeshStandardMaterial({
   color: 0xFFD700,
@@ -33,6 +35,12 @@ const addCoin = (position: Vector3) => {
   const coin = createCoin();
   coin.position.copy(position);
   group.add(coin);
+
+  coinData.push({
+    object: coin,
+    position: coin.position.clone(),
+    collected: false,
+  });
 };
 
 const addRandomCoin = (areaSize: number, excludedObjects: Group[]) => {
@@ -57,10 +65,11 @@ const render = () => {
 
 const generateNewCoins = (count: number, areaSize: number, excludedObjects: Group[]) => {
   group.clear();
+  coinData.length = 0;
 
   for (let i = 0; i < count; i++) {
     addRandomCoin(areaSize, excludedObjects);
   }
 };
 
-export const coins = { group, addRandomCoin, render, generateNewCoins };
+export const coins = { group, coinData, addRandomCoin, render, generateNewCoins };

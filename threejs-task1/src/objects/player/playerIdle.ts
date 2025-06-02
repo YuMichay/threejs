@@ -13,7 +13,7 @@ export const positionIdle = (gltf: GLTF) => {
     gltf.scene.traverse((child) => {
       if (legNames.includes(child.name)) {
         child.rotation.set(0, 0, 0);
-        child.position.set(0, 0, -1);
+        child.position.set(0, 0, 0);
         child.scale.set(1, 1, 1);
       }
 

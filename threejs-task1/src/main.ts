@@ -23,6 +23,7 @@ import { keyboardControl } from './controls/keyboard';
 import { gamePaused } from './controls/gamePaused';
 import { loadingManager } from './controls/loadingManager';
 import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic, singEffect, stopAllEffects, winEffect, loseEffect } from './controls/listener';
+import { isInFrustum, updateFrustum } from './controls/frustum';
 
 // CLOUDS
 clouds.distributeClouds(50, 298, [50, 100]);
@@ -158,6 +159,13 @@ function animate() {
 
   dirLight.position.copy(playerPosition.clone().add(dirLightOffset));
   dirLight.target = player.group;
+
+  // FRUSTUM UPDATE
+  updateFrustum(camera);
+
+  bushes.group.children.forEach(obj => obj.visible = isInFrustum(obj));
+  clouds.group.children.forEach(obj => obj.visible = isInFrustum(obj));
+  coins.group.visible = isInFrustum(coins.group);
 }
 
 renderer.setAnimationLoop(animate);

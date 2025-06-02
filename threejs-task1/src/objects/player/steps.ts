@@ -35,7 +35,7 @@ const render = (time: number, position: Vector3, direction: Vector3) => {
   newMesh.material.map = texture;
   newMesh.material.needsUpdate = true;
   newMesh.position.copy(footPosition);
-  newMesh.position.z = 0.1;
+  newMesh.position.z = 0.05;
 
   group.add(newMesh);
   activeSteps.push({ mesh: newMesh, birthTime: time });
