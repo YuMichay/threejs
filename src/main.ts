@@ -11,18 +11,18 @@ import { dirLight, dirLightOffset } from './environment/light';
 import { loadPlayerModel, player } from './objects/player/player';
 import { clouds } from './objects/static/cloud';
 import { bushes } from './objects/static/bush';
-import { coins } from './objects/animated/coin/coin';
+import { coins } from './objects/animated/coin';
 
 import { COINS_AMOUNT, GAME_TIME, sceneBounds } from './config/constants';
 
-import { updateCoinsDisplay } from './controls/updateCoinsDisplay';
-import { updateTimeDisplay } from './controls/updateTimeDisplay';
+import { updateCoinsDisplay } from './utils/updateCoinsDisplay';
+import { updateTimeDisplay } from './utils/updateTimeDisplay';
 import { gameEnd } from './controls/gameEnd';
 import { coinsManager } from './controls/coinsState';
 import { keyboardControl } from './controls/keyboard';
 import { gamePaused } from './controls/gamePaused';
-import { loadingManager } from './controls/loadingManager';
-import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic, singEffect, stopAllEffects, winEffect, loseEffect } from './controls/listener';
+import { loadingManager } from './utils/loadingManager';
+import { listener, isMusicOn, startMusic, stopMusic, pauseMusic, resumeMusic, singEffect, stopAllEffects, winEffect, loseEffect } from './base/listener';
 import { isInFrustum, updateFrustum } from './controls/frustum';
 
 // CLOUDS

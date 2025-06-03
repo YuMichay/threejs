@@ -1,5 +1,5 @@
 import { coinsManager } from "./coinsState";
-import { loseEffect, winEffect } from "./listener";
+import { loseEffect, winEffect } from "../base/listener";
 
 export const gameEnd = (isWon: boolean) => {
   const modal = document.getElementById('modal');

@@ -7,8 +7,8 @@ import {
   Vector3,
   Group,
 } from 'three';
-import { isPositionValid } from '../../../controls/generateValidPosition';
-import { CoinData } from '../../../types/coins';
+import { isPositionValid } from '../../utils/generateValidPosition';
+import { CoinData } from '../../types/coins';
 
 const group = new Group();
 const coinData: CoinData[] = [];

@@ -7,7 +7,7 @@ import {
   SphereGeometry,
   Vector3
 } from 'three';
-import { isPositionValid } from '../../controls/generateValidPosition';
+import { isPositionValid } from '../../utils/generateValidPosition';
 
 const group = new Group();
 const bushBoxes: Box3[] = [];

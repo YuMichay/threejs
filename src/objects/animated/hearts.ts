@@ -1,5 +1,5 @@
 import { Sprite, SpriteMaterial, TextureLoader, Group, Vector3 } from "three";
-import { HEART_COUNT, HEART_LIFETIME, HEART_SPAWN_INTERVAL } from "../../../config/constants";
+import { HEART_COUNT, HEART_LIFETIME, HEART_SPAWN_INTERVAL } from "../../config/constants";
 
 const textureLoader = new TextureLoader();
 const heartTexture = textureLoader.load('/assets/heart.png');

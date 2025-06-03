@@ -5,8 +5,8 @@ import { backgroundTexture } from '../environment/sky';
 import { footsteps } from "../objects/player/steps";
 import { bushes } from "../objects/static/bush";
 import { clouds } from "../objects/static/cloud";
-import { coins } from "../objects/animated/coin/coin";
-import { hearts } from "../objects/animated/hearts/hearts";
+import { coins } from "../objects/animated/coin";
+import { hearts } from "../objects/animated/hearts";
 
 export const scene = new Scene();
 

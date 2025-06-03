@@ -1,6 +1,5 @@
 import { AudioListener, Audio, AudioLoader } from 'three';
-import { hearts } from '../objects/animated/hearts/hearts';
-import { loadingManager } from './loadingManager';
+import { hearts } from '../objects/animated/hearts';
 
 export const listener = new AudioListener();
 export const backgroundMusic = new Audio(listener);
@@ -19,10 +18,9 @@ let singBuffer: AudioBuffer | null = null;
 export let isMusicOn = false;
 let isPlaying = false;
 
-const audioLoader = new AudioLoader(loadingManager);
+const audioLoader = new AudioLoader();
 
 // BACKGROUND MUSIC LOGIC
-
 export const startMusic = () => {
   isMusicOn = true;
 
